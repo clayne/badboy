@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-the_list = [
+THE_LIST = [
     '4chan', 
     'anarcho_capitalism',
     'antipozi',
@@ -57,6 +57,7 @@ the_list = [
     'nationalsocialism',
     'nazi',
     'negrofree',
+    'neoliberal',
     'new_right',
     'niggercartoons',
     'niggerdocumentaries',
