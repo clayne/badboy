@@ -1,0 +1,7 @@
+# Python Stuff
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Project Stuff
+credentials.py
