@@ -7,21 +7,19 @@ import argparse
 import credentials
 from badlist import THE_LIST
 
-CHECK_DEPTH = 1000
-
-def is_badboy(reddit, baduser):
-    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).comments )
+def is_badboy(reddit, baduser, depth):
+    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).comments, depth )
     bad_print( checked, bad_rec, "Bad Comments" )
     fav_print( checked, gen_rec, "Favorite Places to Comment" )
-    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).submissions )
+    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).submissions, depth )
     bad_print( checked, bad_rec, "Bad Submissions" )
     fav_print( checked, gen_rec, "Favorite Subs to Submit to" )
 
-def review( reddit_iter ):
+def review( reddit_iter, depth ):
     checked = 0
     bad_rec = {}
     record  = {}
-    for comment in reddit_iter.new(limit=CHECK_DEPTH):
+    for comment in reddit_iter.new(limit=depth):
         checked += 1
         sub_name = comment.subreddit.display_name.lower()
         record[sub_name] = record.get(sub_name, 0) + 1
@@ -56,14 +54,15 @@ def connect():
     reddit.read_only = True
     return reddit
 
-def parse_arg():
+def parse_args():
     parser = argparse.ArgumentParser(description="Finds any horrific subreddits that a user might be a member of.")
     parser.add_argument('user', help="User's name")
+    parser.add_argument('depth',nargs='?',default=500, help="How far back to look in the user's submission and comment history. Defaults to 500.")
     opts = parser.parse_args()
-    return opts.user
+    return opts.user, int(opts.depth)
 
 def main():
-    is_badboy( connect(), parse_arg() )
+    is_badboy( connect(), *parse_args() )
 
 if __name__ == "__main__":
     main()

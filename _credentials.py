@@ -6,4 +6,4 @@ CLIENT_ID = ''
 SECRET    = ''
 USER      = ''
 PASSWORD  = ''
-AGENT     = ''
+AGENT     = 'badboy' # This doesn't matter
