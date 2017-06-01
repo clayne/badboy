@@ -8,24 +8,31 @@ import credentials
 from badlist import THE_LIST
 
 def is_badboy(reddit, baduser, depth):
-    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).comments, depth )
+    checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).comments, depth )
     bad_print( checked, bad_rec, "Bad Comments" )
     fav_print( checked, gen_rec, "Favorite Places to Comment" )
-    checked, bad_rec, gen_rec = review( reddit.redditor(baduser).submissions, depth )
+    best_print( best )
+    checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).submissions, depth )
     bad_print( checked, bad_rec, "Bad Submissions" )
     fav_print( checked, gen_rec, "Favorite Subs to Submit to" )
 
 def review( reddit_iter, depth ):
     checked = 0
     bad_rec = {}
-    record  = {}
-    for comment in reddit_iter.new(limit=depth):
+    gen_rec  = {}
+    best = None
+    for subject in reddit_iter.new(limit=depth):
+        if not best or subject.ups > best.ups:
+            best = subject
         checked += 1
-        sub_name = comment.subreddit.display_name.lower()
-        record[sub_name] = record.get(sub_name, 0) + 1
+        sub_name = subject.subreddit.display_name.lower()
+        gen_rec[sub_name] = gen_rec.get(sub_name, 0) + 1
         if sub_name in THE_LIST:
             bad_rec[sub_name] = bad_rec.get(sub_name, 0) + 1
-    return checked, bad_rec, record
+    return checked, bad_rec, gen_rec, best
+
+def best_print( best ):
+    print( "Best Comment in " + best.subreddit.display_name + "(" + str(best.ups) + "): " + best.body, end='\n\n')
 
 def bad_print( checked, record, title ):
     print( (("-" * 5) + title + " (" + str(len(record)) + "/" + str(checked) + ", " + str(len(record)//checked) + "%)").ljust(50, '-') )
