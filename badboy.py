@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import sys
 import praw
 import operator
 import argparse
@@ -8,46 +7,49 @@ import credentials
 from badlist import THE_LIST
 
 def is_badboy(reddit, baduser, depth):
+
     checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).comments, depth )
-    bad_print( checked, bad_rec, "Bad Comments" )
-    fav_print( checked, gen_rec, "Favorite Places to Comment" )
-    best_print( best )
+
+    print_bad_subject( checked, bad_rec, "Bad Comments" )
+    print_fav_subject( checked, gen_rec, "Favorite Places to Comment" )
+    print_best_comment( best )
+
     checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).submissions, depth )
-    bad_print( checked, bad_rec, "Bad Submissions" )
+
+    print_bad_subject( checked, bad_rec, "Bad Submissions" )
     fav_print( checked, gen_rec, "Favorite Subs to Submit to" )
 
 def review( reddit_iter, depth ):
-    checked = 0
-    bad_rec = {}
-    gen_rec  = {}
-    best = None
+    checked, badrecord, genrecord, best = 0, {}, {}, None
     for subject in reddit_iter.new(limit=depth):
         if not best or subject.ups > best.ups:
             best = subject
         checked += 1
         sub_name = subject.subreddit.display_name.lower()
-        gen_rec[sub_name] = gen_rec.get(sub_name, 0) + 1
+        genrecord[sub_name] = genrecord.get(sub_name, 0) + 1
         if sub_name in THE_LIST:
-            bad_rec[sub_name] = bad_rec.get(sub_name, 0) + 1
-    return checked, bad_rec, gen_rec, best
+            badrecord[sub_name] = badrecord.get(sub_name, 0) + 1
+    return checked, badrecord, genrecord, best
 
-def best_print( best ):
+def print_best_comment( best ):
     print( "Best Comment in " + best.subreddit.display_name + "(" + str(best.ups) + "): " + best.body, end='\n\n')
 
-def bad_print( checked, record, title ):
-    print( (("-" * 5) + title + " (" + str(len(record)) + "/" + str(checked) + ", " + str(len(record)//checked) + "%)").ljust(50, '-') )
+def print_bad_subject( checked, record, title ):
+    br = str(sum(record.values()))
+    percent = '0%' if len(checked) == 0 else str(sum(record.values())//checked) + "%"
+    print( ( ("-" * 5) + title + " (" + br + "/" + str(checked) + ", " + percent + ")" ).ljust(50, '-') )
     for pair in record.items():
         print(pair[0] + ": " + str(pair[1]))
-    print('')
+    print()
 
-def fav_print( checked, record, title ):
+def print_fav_subject( checked, record, title ):
     print( (("-" * 5) + title + " (" + str(checked) + ")").ljust(50, '-') )
     i = 0
     for pair in sorted(record.items(), key=operator.itemgetter(1),reverse=True):
         if i == 5: break
         print(pair[0] + ": " + str(pair[1]))
         i += 1
-    print('')
+    print()
 
 def review_list( reddit ):
     for sub in THE_LIST:
