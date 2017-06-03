@@ -1,42 +1,47 @@
 #!/usr/bin/python3
 
-import praw
-import operator
-import argparse
-import credentials
+from praw import Reddit
+from operator import itemgetter
+from argparse import ArgumentParser
+from collections import deque
 from badlist import THE_LIST
+from credentials import *
 
-def is_badboy(reddit, baduser, depth):
+def review( reddit_iter, depth, numb_top_entries=0 ):
 
-    checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).comments, depth )
+    checked, badRecord, generalRecord, best = 0, {}, {}, deque(maxlen=numb_top_entries)
 
-    print_bad_subject( checked, bad_rec, "Bad Comments" )
-    print_fav_subject( checked, gen_rec, "Favorite Places to Comment" )
-    print_best_comment( best )
+    for entry in reddit_iter.new(limit=depth):
 
-    checked, bad_rec, gen_rec, best = review( reddit.redditor(baduser).submissions, depth )
+        if numb_top_entries != 0 and (not best or entry.ups > best[0][0]):
+            best.append((entry.ups, entry))
+            best = deque( sorted(best, key=lambda x: x[0]), maxlen=numb_top_entries )
 
-    print_bad_subject( checked, bad_rec, "Bad Submissions" )
-    fav_print( checked, gen_rec, "Favorite Subs to Submit to" )
-
-def review( reddit_iter, depth ):
-    checked, badrecord, genrecord, best = 0, {}, {}, None
-    for subject in reddit_iter.new(limit=depth):
-        if not best or subject.ups > best.ups:
-            best = subject
         checked += 1
-        sub_name = subject.subreddit.display_name.lower()
-        genrecord[sub_name] = genrecord.get(sub_name, 0) + 1
-        if sub_name in THE_LIST:
-            badrecord[sub_name] = badrecord.get(sub_name, 0) + 1
-    return checked, badrecord, genrecord, best
+        sub_name = entry.subreddit.display_name
+        generalRecord[sub_name] = generalRecord.get(sub_name, 0) + 1
 
-def print_best_comment( best ):
-    print( "Best Comment in " + best.subreddit.display_name + "(" + str(best.ups) + "): " + best.body, end='\n\n')
+        if sub_name.lower() in THE_LIST:
+            badRecord[sub_name] = badRecord.get(sub_name, 0) + 1
+
+    return checked, badRecord, generalRecord, [pair[1] for pair in best]
+
+def connect():
+    reddit = Reddit(client_id=CLIENT_ID, client_secret=SECRET, password=PASSWORD,
+                    user_agent=AGENT, username=USER)
+    reddit.read_only = True
+    return reddit
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Terminal Printing
+
+def print_best_comments( best ):
+    for comment in best:
+        print( "Top Comment in " + comment.subreddit.display_name + "(" + str(comment.ups) + "): " + comment.body, end='\n\n')
 
 def print_bad_subject( checked, record, title ):
     br = str(sum(record.values()))
-    percent = '0%' if len(checked) == 0 else str(sum(record.values())//checked) + "%"
+    percent = '0%' if checked == 0 else str(sum(record.values())//checked) + "%"
     print( ( ("-" * 5) + title + " (" + br + "/" + str(checked) + ", " + percent + ")" ).ljust(50, '-') )
     for pair in record.items():
         print(pair[0] + ": " + str(pair[1]))
@@ -45,34 +50,39 @@ def print_bad_subject( checked, record, title ):
 def print_fav_subject( checked, record, title ):
     print( (("-" * 5) + title + " (" + str(checked) + ")").ljust(50, '-') )
     i = 0
-    for pair in sorted(record.items(), key=operator.itemgetter(1),reverse=True):
+    for pair in sorted(record.items(), key=itemgetter(1),reverse=True):
         if i == 5: break
         print(pair[0] + ": " + str(pair[1]))
         i += 1
     print()
 
-def review_list( reddit ):
-    for sub in THE_LIST:
-        if reddit.subreddit(sub):
-            print('hello')
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Main
 
-def connect():
-    reddit = praw.Reddit(client_id=credentials.CLIENT_ID, client_secret=credentials.SECRET,
-                         password=credentials.PASSWORD,   user_agent=credentials.AGENT,
-                         username=credentials.USER)
-    reddit.read_only = True
-    return reddit
+def badboy_terminal(reddit, user, depth, top):
+
+    checked, badRecord, generalRecord, best = review( reddit.redditor(user).comments, depth, top )
+
+    print_bad_subject( checked, badRecord, "Bad Comments" )
+    print_fav_subject( checked, generalRecord, "Favorite Places to Comment" )
+    print_best_comments( best )
+
+    checked, badRecord, generalRecord, best = review( reddit.redditor(user).submissions, depth )
+
+    print_bad_subject( checked, badRecord, "Bad Submissions" )
+    print_fav_subject( checked, generalRecord, "Favorite Subs to Submit to" )
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Arg Parse
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Finds any horrific subreddits that a user might be a member of.")
+    parser = ArgumentParser(description="Finds any horrific subreddits that a user might be a member of.")
     parser.add_argument('user', help="User's name")
     parser.add_argument('depth',nargs='?',default=500, help="How far back to look in the user's submission and comment history. Defaults to 500.")
+    parser.add_argument('top',nargs='?',default=3, help="Number of highly upvoted comments to display. Defaults to 3.")
     opts = parser.parse_args()
-    return opts.user, int(opts.depth)
-
-def main():
-    is_badboy( connect(), *parse_args() )
+    return opts.user, int(opts.depth), int(opts.top)
 
 if __name__ == "__main__":
-    main()
+    badboy_terminal( connect(), *parse_args() )
 
