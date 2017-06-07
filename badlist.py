@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 THE_LIST = {
     '4chan':'',
@@ -10,6 +10,7 @@ THE_LIST = {
     'apefrica':'',
     'apewrangling':'',
     'argentina':'Controlled by alt-right',
+    'asianmasculinity':'',
     'asktrumpsupporters':'',
     'aznidentity':'',
     'beatingcripples':'',
@@ -21,15 +22,15 @@ THE_LIST = {
     'blackhusbands':'',
     'blackpeopletwitter':'',
     'canada':'Frequent blatant white supremacy talk',
-    'capitalism':'',
-    'chairmanpao':'',
+    'capitalism':'Sexism, Classism, Racism',
+    'chairmanpao':'Sexism',
     'chicongo':'',
     'chimpiremeta':'',
     'chimpireofftopic':'',
     'chimpmusic':'',
     'chimpout':'',
     'choosingbeggars':'',
-    'conservative':'',
+    'conservative':'Sexism, Classism, Racism',
     'conspiracy':'',
     'coontown':'',
     'cringeanarchy':'',
@@ -59,6 +60,7 @@ THE_LIST = {
     'greatapes':'',
     'hbd':'',
     'hillaryforprison':'',
+    'holdmyfries':'',
     'holocaust':'',
     'hottiesfortrump':'',
     'im14andthisisdeep':'',

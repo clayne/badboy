@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from praw import Reddit
 from operator import itemgetter
@@ -40,46 +40,74 @@ def connect():
 
 class Application(tk.Frame):
 
-    def __init__(self, master=None):
+    def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.master.wm_title("badboy")
+        self.master.resizable(width=False, height=False)
+        self.master.minsize(width=300, height=200)
+        self.master.maxsize(width=300, height=200)
         self.pack()
         self.server = connect()
         self.createWidgets()
 
     def createWidgets(self):
-        self.start = tk.Button(self)
-        self.start["text"] = "Review"
+        self.w_review = tk.Button(self)
 
-        self.user = tk.Text(self.master, height=1, width=10)
-        self.depth = tk.Text(self.master, height=1, width=10)
-        self.top = tk.Text(self.master, height=1, width=10)
+        self.w_user = tk.Text(self.master, height=1, width=20)
+        self.w_depth = tk.Text(self.master, height=1, width=20)
+        self.w_top = tk.Text(self.master, height=1, width=10)
 
-        self.start["command"] = lambda : self.review_user(self.get_user(), self.get_depth(), self.get_top())
+        self.w_review["text"] = "Review"
+        self.w_review["command"] = lambda : self.review_button()
+        self.w_depth.insert(tk.END, '500')
+        self.w_top.insert(tk.END, '3')
 
-        self.start.pack(side="bottom")
-        self.user.pack(side="bottom")
-        self.depth.pack(side="bottom")
-        self.top.pack(side="bottom")
+        self.w_user.pack()
+        self.w_depth.pack()
+        self.w_top.pack()
+        self.w_review.pack()
 
-        self.QUIT = tk.Button(self, text="QUIT", command=self.master.destroy)
-        self.QUIT.pack(side="bottom")
+    def review_button(self):
+        self.user = self.get_user()
+        self.depth = self.get_depth()
+        self.numb_top_comments = self.get_top()
 
-    def review_user(self, user, depth, top):
-        self.totalComments, self.badCommmentSummary, \
-        self.generalCommentSummary, self.bestComments = \
-            review( self.server.redditor(user).comments, depth, top )
-        self.totalSubs, self.badSubSummary, \
-        self.generalSubSummary, _ = \
-            review( self.server.redditor(user).submissions, depth )
+        self.review_user()
+        self.display_review()
+
+    def review_user(self):
+        try:
+            self.totalComments, self.badCommmentSummary, \
+            self.generalCommentSummary, self.bestComments = \
+            review( self.server.redditor(self.user).comments, self.depth, self.numb_top_comments )
+
+            self.totalSubs, self.badSubSummary, \
+            self.generalSubSummary, _ = \
+            review( self.server.redditor(self.user).submissions, self.depth )
+        except:
+            print("Error Fetching User Data!\n" + self.user)
+            pass
+
+    def display_review(self):
+        t = tk.Toplevel(self)
+        t.wm_title(self.user)
+        l = tk.Label(t, text="New Window!")
+        l.pack(side="top", fill="both", expand=True, padx=100, pady=100)
 
     def get_user(self):
-        self.user.get("1.0",tk.END)
+        return self.w_user.get("1.0",tk.END).strip()
 
     def get_depth(self):
-        self.depth.get("1.0",tk.END)
+        try:
+            return int(self.w_depth.get("1.0",tk.END).strip())
+        except:
+            return 0
 
     def get_top(self):
-        self.top.get("1.0",tk.END)
+        try:
+            return int(self.w_top.get("1.0",tk.END).strip())
+        except:
+            return 0
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Terminal Printing
@@ -140,8 +168,8 @@ def main():
     if opts[0]:
         badboy_terminal( connect(), *opts )
     else:
-        root = tk.Tk()
-        app = Application(master=root)
+        master = tk.Tk()
+        app = Application(master)
         app.mainloop()
 
 if __name__ == "__main__":
