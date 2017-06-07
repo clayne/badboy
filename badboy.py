@@ -5,10 +5,20 @@ from operator import itemgetter
 from argparse import ArgumentParser
 from collections import deque
 from badlist import THE_LIST
-from credentials import *
 import tkinter as tk
 
+try:
+    from credentials import *
+except ImportError:
+    print("Please setup the credentails file.\n" + \
+        "Consult the Readme for more information.")
+    raise SystemExit
+
 MAX_FAVS = 5
+WIN_HEIGHT = 100
+WIN_WIDTH  = 300
+DEFAULT_TOP = '3'
+DEFAULT_DEPTH = '500'
 
 def review( reddit_iter, depth, numb_top_entries=0 ):
 
@@ -44,36 +54,40 @@ class Application(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master.wm_title("badboy")
         self.master.resizable(width=False, height=False)
-        self.master.minsize(width=300, height=200)
-        self.master.maxsize(width=300, height=200)
-        self.pack()
+        self.master.minsize(width=WIN_WIDTH, height=WIN_HEIGHT)
+        self.master.maxsize(width=WIN_WIDTH, height=WIN_HEIGHT)
         self.server = connect()
         self.createWidgets()
+        self.master.bind('<Return>', self.review_button)
+        self.master.bind('<Escape>', self.close)
 
     def createWidgets(self):
-        self.w_review = tk.Button(self)
 
-        self.w_user = tk.Text(self.master, height=1, width=20)
-        self.w_depth = tk.Text(self.master, height=1, width=20)
-        self.w_top = tk.Text(self.master, height=1, width=10)
+        self.l_user  = tk.Label(self.master, text="User: ").grid(row=0, column=0, sticky='e')
+        self.l_depth = tk.Label(self.master, text="Search Depth: ").grid(row=1, column=0, sticky='e', padx=(8,0))
+        self.l_top   = tk.Label(self.master, text="Top Comments: ").grid(row=1, column=2, padx=(10,0), columnspan=2)
 
-        self.w_review["text"] = "Review"
-        self.w_review["command"] = lambda : self.review_button()
-        self.w_depth.insert(tk.END, '500')
-        self.w_top.insert(tk.END, '3')
+        self.w_user  = tk.Entry(self.master, width=22)
+        self.w_depth = tk.Entry(self.master, width=3)
+        self.w_top   = tk.Entry(self.master, width=3)
 
-        self.w_user.pack()
-        self.w_depth.pack()
-        self.w_top.pack()
-        self.w_review.pack()
+        self.w_user.grid(row=0, column=2, sticky='w', pady=5, columnspan=2)
+        self.w_depth.grid(row=1, column=2, sticky='w', pady=5)
+        self.w_top.grid(row=1, column=3, sticky='w', pady=5, padx=(112,0))
 
-    def review_button(self):
+        self.w_review = tk.Button(self.master, text="Review",
+            command=self.review_button).grid(row=2, column=1, columnspan=3, padx=(0,100))
+
+        self.w_depth.insert(tk.END, DEFAULT_DEPTH)
+        self.w_top.insert(tk.END, DEFAULT_TOP)
+
+    def review_button(self, event=None):
         self.user = self.get_user()
         self.depth = self.get_depth()
         self.numb_top_comments = self.get_top()
 
-        self.review_user()
-        self.display_review()
+        if ( self.review_user() ):
+            self.display_review()
 
     def review_user(self):
         try:
@@ -84,9 +98,11 @@ class Application(tk.Frame):
             self.totalSubs, self.badSubSummary, \
             self.generalSubSummary, _ = \
             review( self.server.redditor(self.user).submissions, self.depth )
+
+            return True
         except:
-            print("Error Fetching User Data!\n" + self.user)
-            pass
+            print("Error Fetching User Data for '" + self.user + "'")
+            return False
 
     def display_review(self):
         t = tk.Toplevel(self)
@@ -94,18 +110,21 @@ class Application(tk.Frame):
         l = tk.Label(t, text="New Window!")
         l.pack(side="top", fill="both", expand=True, padx=100, pady=100)
 
+    def close(self, event=None):
+        raise SystemExit
+
     def get_user(self):
-        return self.w_user.get("1.0",tk.END).strip()
+        return self.w_user.get().strip()
 
     def get_depth(self):
         try:
-            return int(self.w_depth.get("1.0",tk.END).strip())
+            return int(self.w_depth.get().strip())
         except:
             return 0
 
     def get_top(self):
         try:
-            return int(self.w_top.get("1.0",tk.END).strip())
+            return int(self.w_top.get().strip())
         except:
             return 0
 
