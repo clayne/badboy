@@ -93,7 +93,7 @@ class Application(tk.Frame):
         self.numb_top_comments = self.get_top()
 
         if ( self.review_user() ):
-            self.display_review()
+            self.display_text_review()
 
     def review_user(self):
         try:
@@ -110,7 +110,7 @@ class Application(tk.Frame):
             print("Error Fetching User Data for '" + self.user + "'")
             return False
 
-    def display_review(self):
+    def display_text_review(self):
         w = tk.Toplevel(self)
         w.wm_title(self.user)
         w.minsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
@@ -179,7 +179,7 @@ def badboy_terminal(reddit, user, depth, top):
 
 def parse_args():
     parser = ArgumentParser(description=
-        "Finds any horrific subreddits that a user might be a member of.")
+        "Finds any horrific subreddits that a user might be a member of. Providing no arguments starts badboy in a gui mode.")
     parser.add_argument('user', nargs='?', help=
         "User's name")
     parser.add_argument('depth',nargs='?',default=500, help=
