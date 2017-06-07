@@ -14,11 +14,18 @@ except ImportError:
         "Consult the Readme for more information.")
     raise SystemExit
 
+# TODO Ask for credientails and save them
+# TODO Real results, not just text (pie chart)
+# TODO Reddit table format generator
+# TODO Reddit quote generator
+
 MAX_FAVS = 5
 WIN_HEIGHT = 100
 WIN_WIDTH  = 300
 DEFAULT_TOP = '3'
 DEFAULT_DEPTH = '500'
+RESULTS_WIDTH = 500
+RESULTS_HEIGHT = 500
 
 def review( reddit_iter, depth, numb_top_entries=0 ):
 
@@ -46,7 +53,7 @@ def connect():
     return reddit
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# GUI Main
+# GUI
 
 class Application(tk.Frame):
 
@@ -62,7 +69,6 @@ class Application(tk.Frame):
         self.master.bind('<Escape>', self.close)
 
     def createWidgets(self):
-
         self.l_user  = tk.Label(self.master, text="User: ").grid(row=0, column=0, sticky='e')
         self.l_depth = tk.Label(self.master, text="Search Depth: ").grid(row=1, column=0, sticky='e', padx=(8,0))
         self.l_top   = tk.Label(self.master, text="Top Comments: ").grid(row=1, column=2, padx=(10,0), columnspan=2)
@@ -105,15 +111,12 @@ class Application(tk.Frame):
             return False
 
     def display_review(self):
-        RESULTS_WIDTH = 500
-        RESULTS_HEIGHT = 500
-
         w = tk.Toplevel(self)
         w.wm_title(self.user)
         w.minsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
         w.maxsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
 
-        l = tk.Text(w, height=(RESULTS_WIDTH/10), width=int(RESULTS_HEIGHT/6.25))
+        l = tk.Text(w, height=(RESULTS_WIDTH//10), width=(RESULTS_HEIGHT//6.25))
         l.insert(tk.INSERT, 'This is a test!')
         l.pack()
 
@@ -136,7 +139,7 @@ class Application(tk.Frame):
             return 0
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Terminal Printing
+# Terminal
 
 def print_best_comments( best ):
     for comment in best:
@@ -157,9 +160,6 @@ def print_fav_subject( checked, record, title ):
     for pair in sorted(record.items(), key=itemgetter(1),reverse=True)[0:MAX_FAVS]:
         print(pair[0] + ": " + str(pair[1]))
     print()
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Terminal Main
 
 def badboy_terminal(reddit, user, depth, top):
 

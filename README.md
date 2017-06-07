@@ -1,6 +1,6 @@
 # badboy
 
-badboy reviews the recent comments and submissions of a reddit user and reports on them. If the user is found to be active in racist/sexist (or w/e) subs then the info is reported. Favorite subreddits are also reported.
+badboy reviews the recent comments and submissions of a reddit user and reports on them. If the user is found to be active in racist/sexist (or w/e) subs then the info is reported. Favorite subreddits are also reported on along with submissions.
 
 ## Setup
 
@@ -18,7 +18,7 @@ The below is summary lifted from the [praw docs](https://praw.readthedocs.io/en/
 
 ## Usage
 ```
-usage: badboy.py [-h] user [depth]
+usage: badboy.py [-h] [user] [depth] [top]
 
 Finds any horrific subreddits that a user might be a member of.
 
@@ -26,6 +26,7 @@ positional arguments:
   user        User's name
   depth       How far back to look in the user's submission and comment
               history. Defaults to 500.
+  top         Number of highly upvoted comments to display. Defaults to 3.
 
 optional arguments:
   -h, --help  show this help message and exit
