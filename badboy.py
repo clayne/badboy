@@ -105,10 +105,17 @@ class Application(tk.Frame):
             return False
 
     def display_review(self):
-        t = tk.Toplevel(self)
-        t.wm_title(self.user)
-        l = tk.Label(t, text="New Window!")
-        l.pack(side="top", fill="both", expand=True, padx=100, pady=100)
+        RESULTS_WIDTH = 500
+        RESULTS_HEIGHT = 500
+
+        w = tk.Toplevel(self)
+        w.wm_title(self.user)
+        w.minsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
+        w.maxsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
+
+        l = tk.Text(w, height=(RESULTS_WIDTH/10), width=int(RESULTS_HEIGHT/6.25))
+        l.insert(tk.INSERT, 'This is a test!')
+        l.pack()
 
     def close(self, event=None):
         raise SystemExit
