@@ -116,7 +116,7 @@ class Application(tk.Frame):
         w.minsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
         w.maxsize(width=RESULTS_WIDTH, height=RESULTS_HEIGHT)
 
-        l = tk.Text(w, height=(RESULTS_WIDTH//10), width=(RESULTS_HEIGHT//6.25))
+        l = tk.Text(w, height=int(RESULTS_WIDTH/10), width=int(RESULTS_HEIGHT/6.25))
         l.insert(tk.INSERT, 'This is a test!')
         l.pack()
 
@@ -148,7 +148,7 @@ def print_best_comments( best ):
 
 def print_bad_subject( checked, record, title ):
     br = str(sum(record.values()))
-    percent = '0%' if checked == 0 else str(sum(record.values())//checked) + "%"
+    percent = '0%' if checked == 0 else str(int((sum(record.values())/checked)*100)) + "%"
     print( ( ("-" * 5) + title + " (" + br + "/" + str(checked) + \
         ", " + percent + ")" ).ljust(50, '-') )
     for pair in record.items():
