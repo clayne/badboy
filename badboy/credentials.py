@@ -19,7 +19,7 @@ def setup_credentails():
     creds = RedditCredentails(user, password, secret, client_id, agent)
 
     with open(CRED_FILE, 'wb+') as fh:
-        pickle.dump(creds, CRED_FILE, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(creds, fh, protocol=pickle.HIGHEST_PROTOCOL)
 
     return creds
 
