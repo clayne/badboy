@@ -53,6 +53,9 @@ def connect():
     return reddit
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Creditial get
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # GUI
 
 class Application(tk.Frame):
