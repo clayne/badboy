@@ -14,9 +14,6 @@ setup(
 	url = 'https://github.com/aanunez/badboy',
 	packages = ['badboy'],
 	#install_requires = [something probably],
-	scripts = [
-		    'scripts/setup_credentials.py',
-		   ],
 	include_package_data = True,
     entry_points={
         'console_scripts': [

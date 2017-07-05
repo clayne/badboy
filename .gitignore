@@ -4,4 +4,4 @@ __pycache__/
 *$py.class
 
 # Project Stuff
-credentials.py
+user_credentials
