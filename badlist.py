@@ -155,6 +155,7 @@ THE_LIST = {
     'watchniggersdie':'',
     'watchpeopledie':'',
     'weekendgunnit':'',
+    'wewuzkangs':'Extreme blatant racism',
     'weisssturm':'',
     'white_pride':'',
     'whitebeauty':'',
