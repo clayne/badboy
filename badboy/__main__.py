@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-from .badboy import badboy_terminal
+from .badboy import badboy_terminal, connect
 from .gui import Application
 import tkinter as tk
 
@@ -22,9 +22,7 @@ def main():
     if opts.user:
         badboy_terminal( connect(), opts.user, opts.depth, opts.top )
     else:
-        master = tk.Tk()
-        app = Application(master)
-        app.mainloop()
+        Application( tk.Tk() ).mainloop()
 
 if __name__ == "__main__":
     main()

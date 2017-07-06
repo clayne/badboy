@@ -17,7 +17,7 @@ setup(
 	include_package_data = True,
     entry_points={
         'console_scripts': [
-            'badboy = badboy.__main__:badboy'
+            'badboy = badboy.__main__:main'
         ]
     },
     classifiers=[

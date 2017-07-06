@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import pickle
+from pickle import dump, load
 from collections import namedtuple
+from os.path import expanduser, join
 
-CRED_FILE = 'user_credentials'
+CRED_FILE = join( expanduser('~'), '.badboy_credentials' )
 
 RedditCredentails = namedtuple('RedditCredentails', 'user password secret client_id agent')
 
@@ -19,14 +20,14 @@ def setup_credentails():
     creds = RedditCredentails(user, password, secret, client_id, agent)
 
     with open(CRED_FILE, 'wb+') as fh:
-        pickle.dump(creds, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        dump(creds, fh, protocol=pickle.HIGHEST_PROTOCOL)
 
     return creds
 
 def load_credentials():
     try:
         with open(CRED_FILE, 'rb') as fh:
-            creds = pickle.load(fh)
+            creds = load(fh)
         if all(creds):
             return creds
     except:
