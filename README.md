@@ -56,28 +56,31 @@ optional arguments:
 ```
 badboy spez
 
------Bad Comments (3/500, 0%)---------------------
+---------------Bad Comments (3/500, 0%)-------------------------------
 The_Donald: 3
 
------Favorite Places to Comment (500)-------------
+---------------Favorite Places to Comment (500)-----------------------
 announcements: 357
 cscareerquestions: 47
 modnews: 33
 ModSupport: 17
 technology: 13
 
-Top Comment in announcements(12697): > However, why not allow a small 5 minute window to change the title? It shouldn't be long enough to blow up but may be long enough to help prevent a typo
+Top Comment in announcements(22203):
+Reddit search might work by then.
 
-Totally reasonable.
+Top Comment in announcements(13847):
+On Reddit.
 
-Top Comment in announcements(13843): On Reddit.
+Top Comment in announcements(12705):
+> However, why not allow a small 5 minute window to change the title?
+It shouldn't be long enough to blow up but may be long enough to help
+prevent a typo  Totally reasonable.
 
-Top Comment in announcements(22207): Reddit search might work by then.
-
------Bad Submissions (1/500, 0%)------------------
+---------------Bad Submissions (1/500, 0%)----------------------------
 The_Donald: 1
 
------Favorite Subs to Submit to (500)-------------
+---------------Favorite Subs to Submit to (500)-----------------------
 reddit.com: 447
 announcements: 16
 programming: 7

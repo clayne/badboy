@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from .badboy import connect, review, DEFAULT_DEPTH, DEFAULT_TOP
+from .badboy import connect, review
 
 class Application(tk.Frame):
 
@@ -9,6 +9,8 @@ class Application(tk.Frame):
     WIN_WIDTH  = 300
     RESULTS_WIDTH = 500
     RESULTS_HEIGHT = 500
+    DEFAULT_TOP = '3'
+    DEFAULT_DEPTH = '500'
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -37,8 +39,8 @@ class Application(tk.Frame):
         self.w_review = tk.Button(self.master, text="Review",
             command=self.review_button).grid(row=2, column=1, columnspan=3, padx=(0,100))
 
-        self.w_depth.insert(tk.END, DEFAULT_DEPTH)
-        self.w_top.insert(tk.END, DEFAULT_TOP)
+        self.w_depth.insert(tk.END, Application.DEFAULT_DEPTH)
+        self.w_top.insert(tk.END, Application.DEFAULT_TOP)
 
     def review_button(self, event=None):
         self.user = self.get_user()

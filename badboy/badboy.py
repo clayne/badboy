@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
 from praw import Reddit
-from operator import itemgetter
+from textwrap import wrap
 from collections import deque
 from .badlist import THE_LIST
+from operator import itemgetter
 from .credentials import setup_credentails, load_credentials
 
-# TODO Ask for credientails and save them
 # TODO Real results, not just text (pie chart)
 # TODO Reddit table format generator
 # TODO Reddit quote generator
 
 MAX_FAVS = 5
-DEFAULT_TOP = '3'
-DEFAULT_DEPTH = '500'
+LEFT_DISPLACE = 15
+HEADER_LENGTH = 70
 
 def review( reddit_iter, depth, numb_top_entries=0 ):
 
-    checked, badRecord, generalRecord, best = 0, {}, {}, deque(maxlen=numb_top_entries)
+    badRecord, generalRecord, best = {}, {}, deque(maxlen=numb_top_entries)
 
     for entry in reddit_iter.new(limit=depth):
 
@@ -25,12 +25,13 @@ def review( reddit_iter, depth, numb_top_entries=0 ):
             best.append((entry.ups, entry))
             best = deque( sorted(best, key=lambda x: x[0]), maxlen=numb_top_entries )
 
-        checked += 1
         sub_name = entry.subreddit.display_name
         generalRecord[sub_name] = generalRecord.get(sub_name, 0) + 1
 
         if sub_name.lower() in THE_LIST:
             badRecord[sub_name] = badRecord.get(sub_name, 0) + 1
+
+    checked = sum([v for v in generalRecord.values()])
 
     return checked, badRecord, generalRecord, [pair[1] for pair in best]
 
@@ -48,22 +49,22 @@ def connect():
 # Terminal
 
 def print_best_comments( best ):
-    for comment in best:
+    for comment in reversed(best):
         print( "Top Comment in " + comment.subreddit.display_name + \
-            "(" + str(comment.ups) + "): " + comment.body, end='\n\n')
+            "(" + str(comment.ups) + "):\n" + '\n'.join(wrap(comment.body,HEADER_LENGTH)), end='\n\n')
 
 def print_bad_subject( checked, record, title ):
     br = str(sum(record.values()))
     percent = '0%' if checked == 0 else str(int((sum(record.values())/checked)*100)) + "%"
-    print( ( ("-" * 5) + title + " (" + br + "/" + str(checked) + \
-        ", " + percent + ")" ).ljust(50, '-') )
+    print( ( ("-" * LEFT_DISPLACE) + title + " (" + br + "/" + str(checked) + \
+        ", " + percent + ")" ).ljust(HEADER_LENGTH, '-') )
     for pair in record.items():
         print(pair[0] + ": " + str(pair[1]))
     print()
 
 def print_fav_subject( checked, record, title ):
-    print( (("-" * 5) + title + " (" + str(checked) + ")").ljust(50, '-') )
-    for pair in sorted(record.items(), key=itemgetter(1),reverse=True)[0:MAX_FAVS]:
+    print( (("-" * LEFT_DISPLACE) + title + " (" + str(checked) + ")").ljust(HEADER_LENGTH, '-') )
+    for pair in sorted(record.items(), key=itemgetter(1), reverse=True)[0:MAX_FAVS]:
         print(pair[0] + ": " + str(pair[1]))
     print()
 
