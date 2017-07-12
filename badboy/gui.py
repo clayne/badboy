@@ -52,12 +52,10 @@ class Application(tk.Frame):
 
     def review_user(self):
         try:
-            self.totalComments, self.badCommmentSummary, \
-            self.generalCommentSummary, self.bestComments = \
+            self.comment_history = \
             review( self.server.redditor(self.user).comments, self.depth, self.numb_top_comments )
 
-            self.totalSubs, self.badSubSummary, \
-            self.generalSubSummary, _ = \
+            self.post_history = \
             review( self.server.redditor(self.user).submissions, self.depth )
 
             return True
@@ -72,7 +70,14 @@ class Application(tk.Frame):
         w.maxsize(width=Application.RESULTS_WIDTH, height=Application.RESULTS_HEIGHT)
 
         l = tk.Text(w, height=int(Application.RESULTS_WIDTH/10), width=int(Application.RESULTS_HEIGHT/6.25))
-        l.insert(tk.INSERT, 'This is a test!')
+        l.insert(tk.INSERT, '**Bad Places the User Comments** | **Fav places to Comment**| **Some Comments**|')
+        l.insert(tk.INSERT, '-|-|-|')
+        for i in range(self.numb_top_comments):
+            l.insert(tk.INSERT,  '|' + '|' + '|')
+
+        l.insert(tk.INSERT, '**Bad Placse the User Submits to** | **Fav Places to Submit**|')
+        for i in range(self.numb_top_comments):
+            l.insert(tk.INSERT,  '|' + '|')
         l.pack()
 
     def close(self, event=None):
