@@ -13,7 +13,6 @@ setup(
 	license = 'GPLv3',
 	url = 'https://github.com/aanunez/badboy',
 	packages = ['badboy'],
-	#install_requires = [something probably],
 	include_package_data = True,
     entry_points={
         'console_scripts': [

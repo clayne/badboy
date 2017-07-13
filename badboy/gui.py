@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import tkinter as tk
-from .badboy import connect, review
+from .badboy import connect, review, MAX_FAVS
 
 class Application(tk.Frame):
 
@@ -70,14 +70,14 @@ class Application(tk.Frame):
         w.maxsize(width=Application.RESULTS_WIDTH, height=Application.RESULTS_HEIGHT)
 
         l = tk.Text(w, height=int(Application.RESULTS_WIDTH/10), width=int(Application.RESULTS_HEIGHT/6.25))
-        l.insert(tk.INSERT, '**Bad Places the User Comments** | **Fav places to Comment**| **Some Comments**|')
-        l.insert(tk.INSERT, '-|-|-|')
-        for i in range(self.numb_top_comments):
-            l.insert(tk.INSERT,  '|' + '|' + '|')
+        l.insert(tk.INSERT, '**Bad Places the User Comments** | **Fav places to Comment**| **Some Comments**|\n')
+        l.insert(tk.INSERT, '-|-|-|\n')
+        for i in range(max(self.numb_top_comments,MAX_FAVS)):
+            l.insert(tk.INSERT, list(self.comment_history.bad.keys())[i] + '|' +  + '|' +  + '|\n')
 
-        l.insert(tk.INSERT, '**Bad Placse the User Submits to** | **Fav Places to Submit**|')
-        for i in range(self.numb_top_comments):
-            l.insert(tk.INSERT,  '|' + '|')
+        l.insert(tk.INSERT, '**Bad Placse the User Submits to** | **Fav Places to Submit**|\n')
+        for i in range(max(self.numb_top_comments,MAX_FAVS)):
+            l.insert(tk.INSERT,  '|' + '|\n')
         l.pack()
 
     def close(self, event=None):
