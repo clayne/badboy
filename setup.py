@@ -14,6 +14,9 @@ setup(
 	url = 'https://github.com/aanunez/badboy',
 	packages = ['badboy'],
 	include_package_data = True,
+    install_requires=[
+        'praw'
+    ],
     entry_points={
         'console_scripts': [
             'badboy = badboy.__main__:main'

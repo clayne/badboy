@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+from sys import exit
 from praw import Reddit
 from textwrap import wrap
 from .badlist import THE_LIST
 from operator import itemgetter
 from collections import namedtuple
-from .credentials import setup_credentails, load_credentials
+from .credentials import get_credentials
 
 # TODO Real results, not just text (pie chart)
 # TODO Reddit table format generator
@@ -36,9 +37,10 @@ def review( reddit_iter, depth, numb_top_entries=0 ):
         generalRecord, [pair[1] for pair in best] )
 
 def connect():
-    creds = load_credentials()
-    if not creds:
-        creds = setup_credentails()
+    creds = get_credentials()
+    if not creds or not all(creds):
+        return None
+
     reddit = Reddit(username=creds.user, password=creds.password,
                     client_secret=creds.secret, client_id=creds.client_id,
                     user_agent=creds.agent)
@@ -69,6 +71,9 @@ def print_fav_subject( checked, record, title ):
     print()
 
 def badboy_terminal(reddit, user, depth, top):
+    if reddit is None:
+        print("Badboy unable to connect, exiting.")
+        return
 
     comment_history = review( reddit.redditor(user).comments, depth, top )
 

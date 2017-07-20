@@ -14,14 +14,18 @@ class Application(tk.Frame):
 
     def __init__(self, master):
         tk.Frame.__init__(self, master)
+        self.master.withdraw()
         self.master.wm_title("badboy")
         self.master.resizable(width=False, height=False)
         self.master.minsize(width=Application.WIN_WIDTH, height=Application.WIN_HEIGHT)
         self.master.maxsize(width=Application.WIN_WIDTH, height=Application.WIN_HEIGHT)
-        self.server = connect()
         self.createWidgets()
         self.master.bind('<Return>', self.review_button)
         self.master.bind('<Escape>', self.close)
+        self.server = connect()
+        if not self.server:
+            raise SystemExit
+        self.master.deiconify()
 
     def createWidgets(self):
         self.l_user  = tk.Label(self.master, text="User: ").grid(row=0, column=0, sticky='e')
