@@ -16,10 +16,25 @@ MAX_FAVS = 5
 LEFT_DISPLACE = 15
 HEADER_LENGTH = 70
 
-RedditUserHistory = namedtuple('RedditUserHistory', 'total bad general best')
+class RedditUserHistory( namedtuple('RedditUserHistory', 'total bad general best') ):
+    '''
+    :param total: number of reviewed items
+    :param bad: dictionary of bad subreddits where value is the number of times that
+              subreddit was seen.
+    :param general: dictionary of all seen subreddits where value is the number of times
+              that subreddit was seen.
+    :param best: list of best (most upvoted) comments or submission text found
+    '''
+    pass
 
 def review( reddit_iter, depth, numb_top_entries=0 ):
-
+    '''
+    Reviews the comments or submissions of a user.
+    :param reddit_iter:
+    :param depth:
+    :param numb_top_entries:
+    :returns: :class:`RedditUserHistory`
+    '''
     badRecord, generalRecord, best = {}, {}, []
     for entry in reddit_iter.new(limit=depth):
 
@@ -37,6 +52,9 @@ def review( reddit_iter, depth, numb_top_entries=0 ):
         generalRecord, [pair[1] for pair in best] )
 
 def connect():
+    '''
+    Get login credentails and connect to the reddit PRAW api.
+    '''
     creds = get_credentials()
     if not creds or not all(creds):
         return None
